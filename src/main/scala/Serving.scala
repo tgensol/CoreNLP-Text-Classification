@@ -1,9 +1,9 @@
 package org.template.classification
 
-import io.prediction.controller.LServing
+import org.apache.predictionio.controller.LServing
 
 import scala.io.Source
-import io.prediction.controller.Params
+import org.apache.predictionio.controller.Params
 
 case class ServingParams(filepath: String) extends Params
 

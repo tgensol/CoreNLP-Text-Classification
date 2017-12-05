@@ -1,10 +1,10 @@
 package org.template.classification
 
-import io.prediction.controller.PDataSource
-import io.prediction.controller.EmptyEvaluationInfo
-import io.prediction.controller.Params
-import io.prediction.data.storage.Event
-import io.prediction.data.store.PEventStore
+import org.apache.predictionio.controller.PDataSource
+import org.apache.predictionio.controller.EmptyEvaluationInfo
+import org.apache.predictionio.controller.Params
+import org.apache.predictionio.data.storage.Event
+import org.apache.predictionio.data.store.PEventStore
 
 import org.apache.spark.SparkContext
 import org.apache.spark.SparkContext._
@@ -25,29 +25,23 @@ class DataSource(val dsp: DataSourceParams)
   
     val eventsRDD: RDD[Event] = PEventStore.find(
       appName = dsp.appName,
-      entityType = Some("question"),
-      eventNames = Some(List("twitter"))
+      entityType = Some("choose"),
+      eventNames = Some(List("contact"))
     )(sc).cache()
 
     val labeledPoints: RDD[TextClass] = eventsRDD
-      .filter {event => event.event == "twitter"}
+      .filter {event => event.event == "contact"}
       .map { event =>
 
       try {
         TextClass(
           text_type = event.entityId,
           text = event.properties.get[String]("text"),
-          gender = event.properties.getOpt[String]("gender"),
-          dizzy = event.properties.getOpt[String]("dizziness"),
-          convul = event.properties.getOpt[String]("convulsions"),
-          heart = event.properties.getOpt[String]("heart_palpitation"),
-          breath = event.properties.getOpt[String]("shortness_of_breath"),
-          head = event.properties.getOpt[String]("headaches"),
-          effect = event.properties.getOpt[String]("effect_decreased"),
-          allergy = event.properties.getOpt[String]("allergies_worse"),
-          bad = event.properties.getOpt[String]("bad_interaction"),
-          nausea = event.properties.getOpt[String]("nausea"),
-          insomnia = event.properties.getOpt[String]("insomnia")
+          replyTo = event.properties.getOpt[String]("replyTo"),
+          gender = event.properties.getOpt[Number]("gender"),
+          bdate = event.properties.getOpt[Number]("bdate"),
+          lang = event.properties.getOpt[String]("lang"),
+          platform = event.properties.getOpt[String]("platform")
         ) 
       } catch {
         case e: Exception =>
@@ -64,29 +58,23 @@ class DataSource(val dsp: DataSourceParams)
   : Seq[(TrainingData, EmptyEvaluationInfo, RDD[(Query, ActualResult)])] = {
     val eventsRDD: RDD[Event] = PEventStore.find(
       appName = dsp.appName,
-      entityType = Some("question"),
-      eventNames = Some(List("twitter"))
+      entityType = Some("choose"),
+      eventNames = Some(List("contact"))
     )(sc).cache()
 
     val labeledPoints: RDD[TextClass] = eventsRDD
-      .filter {event => event.event == "twitter"}
+      .filter {event => event.event == "contact"}
       .map { event =>
 
       try {
         TextClass(
           text_type = event.entityId,
           text = event.properties.get[String]("text"),
-          gender = event.properties.getOpt[String]("gender"),
-          dizzy = event.properties.getOpt[String]("dizziness"),
-          convul = event.properties.getOpt[String]("convulsions"),
-          heart = event.properties.getOpt[String]("heart_palpitation"),
-          breath = event.properties.getOpt[String]("shortness_of_breath"),
-          head = event.properties.getOpt[String]("headaches"),
-          effect = event.properties.getOpt[String]("effect_decreased"),
-          allergy = event.properties.getOpt[String]("allergies_worse"),
-          bad = event.properties.getOpt[String]("bad_interaction"),
-          nausea = event.properties.getOpt[String]("nausea"),
-          insomnia = event.properties.getOpt[String]("insomnia")
+          replyTo = event.properties.getOpt[String]("replyTo"),
+          gender = event.properties.getOpt[Number]("gender"),
+          bdate = event.properties.getOpt[Number]("bdate"),
+          lang = event.properties.getOpt[String]("lang"),
+          platform = event.properties.getOpt[String]("platform")
         ) 
       } catch {
         case e: Exception =>
@@ -102,7 +90,7 @@ class DataSource(val dsp: DataSourceParams)
         new TrainingData(labeledPoints),
         new EmptyEvaluationInfo(),
         labeledPoints.map {
-          p => (new Query(p.text, p.gender, p.dizzy, p.convul, p.heart, p.breath, p.head, p.effect, p.allergy, p.bad, p.nausea, p.insomnia), 
+          p => (new Query(p.text, p.replyTo, p.gender, p.bdate, p.lang, p.platform), 
             new ActualResult(p.text_type))
         }
       )
@@ -110,20 +98,15 @@ class DataSource(val dsp: DataSourceParams)
   }
 }
 
+
 case class TextClass(
   val text_type: String,
   val text: String,
-  val gender: Option[String],
-  val dizzy: Option[String],
-  val convul: Option[String],
-  val heart: Option[String],
-  val breath: Option[String],
-  val head: Option[String],
-  val effect: Option[String],
-  val allergy: Option[String],
-  val bad: Option[String],
-  val nausea: Option[String],
-  val insomnia: Option[String]
+  val replyTo: Option[String],
+  val gender: Option[Number],
+  val bdate: Option[Number],
+  val lang: Option[String],
+  val platform: Option[String]
 )
 
 class TrainingData(

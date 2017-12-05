@@ -1,7 +1,7 @@
 package org.template.classification
 
-import io.prediction.controller.PAlgorithm
-import io.prediction.controller.Params
+import org.apache.predictionio.controller.PAlgorithm
+import org.apache.predictionio.controller.Params
 
 import org.apache.spark.SparkContext
 import org.apache.spark.SparkContext._
@@ -78,30 +78,18 @@ class NLPAlgorithm(val ap: AlgorithmParams)
       System.out.println(line + " ==> " + cl.classOf(dd));
     }*/
 
+
     var line = "\t" + query.text + "\t"
     if (query.gender.isEmpty) line += "unknown"
     line += query.gender + "\t"
-    if (query.dizziness.isEmpty) line += "unknown"
-    line += query.dizziness + "\t"
-    if (query.convulsions.isEmpty) line += "unknown"
-    line += query.convulsions + "\t"
-    if (query.heart_palpitation.isEmpty) line += "unknown"
-    line += query.heart_palpitation + "\t";
-    if (query.shortness_of_breath.isEmpty) line += "unknown"
-    line += query.shortness_of_breath + "\t"
-    if (query.headaches.isEmpty) line += "unknown"
-    line += query.headaches + "\t"
-    if (query.effect_decreased.isEmpty) line += "unknown"
-    line += query.effect_decreased + "\t"
-    if (query.allergies_worse.isEmpty) line += "unknown"
-    line += query.allergies_worse + "\t";
-    if (query.bad_interaction.isEmpty) line += "unknown"
-    line += query.bad_interaction + "\t";
-    if (query.nausea.isEmpty) line += "unknown"
-    line += query.nausea + "\t";
-    if (query.insomnia.isEmpty) line += "unknown"
-    line += query.insomnia + "\t";
-
+    if (query.replyTo.isEmpty) line += "unknown"
+    line += query.replyTo + "\t"
+    if (query.bdate.isEmpty) line += -1
+    line += query.bdate + "\t"
+    if (query.lang.isEmpty) line += -1
+    line += query.lang + "\t";
+    if (query.platform.isEmpty) line += "unknown"
+    line += query.platform + "\t"
     val d = cdc.makeDatumFromLine(line)
 
     new PredictedResult(cl.classOf(d))

@@ -5,8 +5,8 @@ package org.apache.spark.mllib.classification
 
 import org.template.classification.AlgorithmParams
 
-import io.prediction.controller.IPersistentModel
-import io.prediction.controller.IPersistentModelLoader
+import org.apache.predictionio.controller.IPersistentModel
+import org.apache.predictionio.controller.IPersistentModelLoader
 
 import org.apache.spark.SparkContext
 
