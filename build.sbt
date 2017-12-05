@@ -1,38 +1,12 @@
-import scalariform.formatter.preferences._
-import com.typesafe.sbt.SbtScalariform
-import com.typesafe.sbt.SbtScalariform.ScalariformKeys
+name := "template-scala-parallel-vanilla"
 
-name := "template-scala-parallel-recommendation"
-
-organization := "com.appchoose"
-
-scalaVersion := "2.11.11"
-
-val pioVersion = "0.12.0-incubating"
-
+scalaVersion := "2.11.8"
 libraryDependencies ++= Seq(
-  "org.apache.predictionio" %% "apache-predictionio-core" % pioVersion % "provided",
-  "org.apache.spark" %% "spark-core" % "2.1.1" % "provided",
-  "org.apache.spark" %% "spark-mllib" % "2.1.1" % "provided",
-  "edu.stanford.nlp" % "stanford-corenlp" % "3.8.0")
+  "org.apache.predictionio" %% "apache-predictionio-core" % "0.12.0-incubating" % "provided",
+  "org.apache.spark"        %% "spark-mllib"              % "2.1.1" % "provided",
+   "org.apache.spark" %% "spark-core" % "2.1.1" % "provided",
+  "edu.stanford.nlp" % "stanford-corenlp" % "3.8.0",
+  "org.scalatest"           %% "scalatest"                % "3.0.4" % "test")
 
-resolvers += Resolver.mavenLocal
-
-SbtScalariform.scalariformSettings
-
-ScalariformKeys.preferences := ScalariformKeys.preferences.value
-  .setPreference(AlignSingleLineCaseStatements, true)
-  .setPreference(DoubleIndentClassDeclaration, true)
-  .setPreference(DanglingCloseParenthesis, Prevent)
-  .setPreference(MultilineScaladocCommentsStartOnFirstLine, true)
-
-assemblyMergeStrategy in assembly := {
-  case "plugin.properties" => MergeStrategy.discard
-  case PathList(ps @ _*) if ps.last endsWith "package-info.class" =>
-    MergeStrategy.first
-  case PathList(ps @ _*) if ps.last endsWith "UnusedStubClass.class" =>
-    MergeStrategy.first
-  case x =>
-    val oldStrategy = (assemblyMergeStrategy in assembly).value
-    oldStrategy(x)
-}
+// SparkContext is shared between all tests via SharedSingletonContext
+parallelExecution in Test := false
