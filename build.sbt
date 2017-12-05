@@ -16,6 +16,7 @@ libraryDependencies ++= Seq(
   "org.apache.spark" %% "spark-mllib" % "2.1.1" % "provided",
   "edu.stanford.nlp" % "stanford-corenlp" % "3.8.0")
 
+resolvers += Resolver.mavenLocal
 
 SbtScalariform.scalariformSettings
 
